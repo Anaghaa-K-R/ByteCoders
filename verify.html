@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify - TrustGuard AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo">TrustGuard AI</a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="verify.html" class="active">Verify</a>
+            <a href="about.html">About</a>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 800px;">
+        <div class="card">
+            <h2 style="margin-bottom: 1.5rem;">Verify AI Response</h2>
+            
+            <form id="verifyForm">
+                <div class="form-group">
+                    <label>Mode</label>
+                    <select id="mode">
+                        <option value="general">General Question</option>
+                        <option value="coding">Coding Question</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Original Question</label>
+                    <textarea id="question" rows="3" placeholder="What did you ask the AI?"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>AI Response</label>
+                    <textarea id="aiResponse" rows="6" placeholder="Paste the AI response here..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Verify Response</button>
+            </form>
+
+            <div class="loader" id="loader"></div>
+
+            <div id="resultSection" class="result-box">
+                <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #eee;">
+                
+                <div id="statusBadge" class="status-badge"></div>
+                
+                <h3>Confidence Score</h3>
+                <div class="progress-container">
+                    <div id="confidenceBar" class="progress-bar"></div>
+                </div>
+                <p id="confidenceText" style="font-weight: bold; margin-bottom: 1.5rem;"></p>
+
+                <div style="background: #f1f5f9; padding: 1.5rem; border-radius: 8px;">
+                    <h4 style="margin-bottom: 0.5rem;">Suggested Correction:</h4>
+                    <p id="correctionText" style="color: var(--text-dark);"></p>
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <h4>Sources:</h4>
+                    <ul id="sourceList" style="margin-left: 1.5rem; color: var(--primary);"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
