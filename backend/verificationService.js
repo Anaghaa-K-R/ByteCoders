@@ -1,9 +1,19 @@
-const aiService = require('./aiService');
+const aiService = require("./aiService");
 
 async function processVerification(data) {
-    const { mode, question, aiResponse } = data;
-    if (!question || !aiResponse) throw new Error("Missing fields");
-    return await aiService.getGeminiAnalysis(mode, question, aiResponse);
+  const { mode, question, aiResponse } = data;
+
+  if (!question || !aiResponse) {
+    throw new Error("Missing question or AI response");
+  }
+
+  const result = await aiService.getGeminiAnalysis(
+    mode,
+    question,
+    aiResponse
+  );
+
+  return result;
 }
 
 module.exports = { processVerification };

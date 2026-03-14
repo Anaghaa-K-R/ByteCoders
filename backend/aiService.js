@@ -1,37 +1,72 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-require('dotenv').config();
+require("dotenv").config();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 async function getGeminiAnalysis(mode, question, aiResponse) {
-    const model = genAI.getGenerativeModel({ 
-        model: "gemini-1.5-flash",
-        generationConfig: { responseMimeType: "application/json" }
-    });
 
-    const prompt = `You are a strict Fact-Checker. 
-Analyze the following for "Hallucinations" (false info).
-User Question: "${question}"
-AI Claim: "${aiResponse}"
+  const model = genAI.getGenerativeModel({
+    model: "gemini-1.5-flash"
+  });
 
-RULES:
-1. If the claim is scientifically or historically impossible (like a President of the Moon), the status MUST be "Hallucination" and confidence MUST be 0-10%.
-2. Provide the "correct_information" based on real-world facts.
-3. Return ONLY a JSON object:
+  const prompt = `
+You are TrustGuard AI, a system designed to detect hallucinations in AI responses.
+
+Analyze the following.
+
+Mode: ${mode}
+
+User Question:
+${question}
+
+AI Response:
+${aiResponse}
+
+Tasks:
+1. Determine if the AI response correctly answers the question.
+2. If the question is impossible (example: "Who is the president of the moon"), mark it as hallucination.
+3. Do NOT introduce unrelated topics.
+4. Stay strictly focused on the question.
+5. Provide corrected information if the answer is wrong.
+
+Return ONLY valid JSON in this format:
+
 {
-  "status": "Hallucination" or "Verified",
-  "confidence": number,
-  "explanation": "why",
-  "correct_information": "the truth",
-  "sources": ["source1", "source2"]
-}`;
+"status": "Verified or Hallucination",
+"confidence": number between 0 and 100,
+"explanation": "short explanation",
+"correct_information": "correct answer if needed",
+"sources": ["reliable source"]
+}
+`;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const text = result.response.text().trim();
+
     try {
-        const result = await model.generateContent(prompt);
-        return JSON.parse(result.response.text());
-    } catch (error) {
-        console.error("Gemini Error:", error);
-        throw new Error("AI Analysis Failed");
+      return JSON.parse(text);
+    } catch {
+      return {
+        status: "Uncertain",
+        confidence: 50,
+        explanation: text,
+        correct_information: "",
+        sources: []
+      };
     }
+
+  } catch (error) {
+    console.error("Gemini Error:", error);
+
+    return {
+      status: "Error",
+      confidence: 0,
+      explanation: "Gemini API failed",
+      correct_information: "",
+      sources: []
+    };
+  }
 }
 
 module.exports = { getGeminiAnalysis };
